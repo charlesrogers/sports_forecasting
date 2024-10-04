@@ -44,10 +44,11 @@ inputPanel(
   selectInput("home_team", "Home Team:", 
               choices = unique(c(results$historical_data$home_team, results$historical_data$away_team))),
   selectInput("away_team", "Away Team:", 
-              choices = unique(c(results$historical_data$home_team, results$historical_data$away_team)))
+              choices = unique(c(results$historical_data$home_team, results$historical_data$away_team))),
+  actionButton("predict", "Generate Prediction")
 )
 
-renderPlot({
+predictions <- eventReactive(input$predict, {
   req(input$home_team != input$away_team)
   
   new_game <- tibble(
@@ -55,22 +56,26 @@ renderPlot({
     away_team = input$away_team
   )
   
-  new_game_predictions <- predict_new_game(new_game, results$individual_models, results$ensemble_model, results$team_performance)
-  
-  plot_model_predictions(new_game_predictions)
+  predict_new_game(new_game, results$individual_models, results$ensemble_model, results$team_performance)
 })
 
-renderText({
-  req(input$home_team != input$away_team)
-  
-  new_game <- tibble(
-    home_team = input$home_team,
-    away_team = input$away_team
-  )
-  
-  new_game_predictions <- predict_new_game(new_game, results$individual_models, results$ensemble_model, results$team_performance)
-  
-  paste("Ensemble prediction: ", round(new_game_predictions["Ensemble"] * 100, 2), "% chance of home team win")
+renderTable({
+  req(predictions())
+  predictions()
+}, digits = 4)
+
+renderPlot({
+  req(predictions())
+  predictions() %>%
+    filter(Metric == "win_prob") %>%
+    pivot_longer(cols = -Metric, names_to = "Team", values_to = "Probability") %>%
+    ggplot(aes(x = Team, y = Probability, fill = Team)) +
+    geom_col() +
+    geom_text(aes(label = sprintf("%.2f%%", Probability * 100)), vjust = -0.5) +
+    scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+    labs(title = "Win Probability", x = NULL, y = NULL) +
+    theme_minimal() +
+    theme(legend.position = "none")
 })
 ```
 

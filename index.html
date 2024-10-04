@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.5.55">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -52,6 +86,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#model-performance" id="toc-model-performance" class="nav-link active" data-scroll-target="#model-performance">Model Performance</a></li>
   <li><a href="#team-selection-and-prediction" id="toc-team-selection-and-prediction" class="nav-link" data-scroll-target="#team-selection-and-prediction">Team Selection and Prediction</a></li>
   <li><a href="#roc-curve" id="toc-roc-curve" class="nav-link" data-scroll-target="#roc-curve">ROC Curve</a></li>
+  <li><a href="#console-input" id="toc-console-input" class="nav-link" data-scroll-target="#console-input">Console Input</a></li>
   </ul>
 </nav>
 </div>
@@ -124,14 +159,17 @@ Ensemble |   glm | 867.7 (0.407) | 876.6 (0.865) |     0.002 | 0.490</code></pre
 </div>
 </div>
 </div>
+<div>
+<button id="predict" type="button" class="btn btn-default action-button">Generate Prediction</button>
 </div>
 </div>
+</div>
+</div>
+<div class="cell-output-display no-overflow-x">
+<div id="out3ebd2d1cdd2a9b2c" class="shiny-html-output"></div>
 </div>
 <div class="cell-output-display">
-<div class="shiny-plot-output html-fill-item" id="outfa6a4ff8e1e5d14e" style="width:100%;height:400px;"></div>
-</div>
-<div class="cell-output-display">
-<div id="out5dd27bb45105c13d" class="shiny-text-output"></div>
+<div class="shiny-plot-output html-fill-item" id="outf7607bb7a8b8b85b" style="width:100%;height:400px;"></div>
 </div>
 </div>
 </section>
@@ -152,6 +190,23 @@ Ensemble |   glm | 867.7 (0.407) | 876.6 (0.865) |     0.002 | 0.490</code></pre
 </div>
 </div>
 </div>
+</section>
+<section id="console-input" class="level2">
+<h2 class="anchored" data-anchor-id="console-input">Console Input</h2>
+<p>To make predictions using console input, run the following code in your R console:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/03_prediction.R"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"results.RData"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>home_team <span class="ot">&lt;-</span> <span class="fu">readline</span>(<span class="st">"Enter Home Team: "</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>away_team <span class="ot">&lt;-</span> <span class="fu">readline</span>(<span class="st">"Enter Away Team: "</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>new_game <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">home_team =</span> home_team,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">away_team =</span> away_team</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>predictions <span class="ot">&lt;-</span> <span class="fu">predict_new_game</span>(new_game, results<span class="sc">$</span>individual_models, results<span class="sc">$</span>ensemble_model, results<span class="sc">$</span>team_performance)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(predictions)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 
 </main>
