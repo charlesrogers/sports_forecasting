@@ -11,7 +11,6 @@ train_individual_models <- function(data) {
   formula <- home_win ~ home_win_rate + away_win_rate
   
   # Train models
-  models$BTM <- glm(formula, data = data, family = binomial())
   models$TOOR <- glm(formula, data = data, family = binomial())
   models$GSSD <- glm(formula, data = data, family = binomial())
   models$ZSD <- glm(formula, data = data, family = binomial())

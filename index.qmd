@@ -1,0 +1,90 @@
+---
+title: "Sports Game Prediction Dashboard"
+format: 
+  html:
+    theme: cosmo
+    toc: true
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(caret)
+library(pROC)
+library(performance)
+library(shiny)
+
+# Source all the R scripts
+source("R/01_data_processing.R")
+source("R/02_model_training.R")
+source("R/03_prediction.R")
+source("R/04_evaluation.R")
+source("R/05_visualization.R")
+
+# Load the data and models
+load("results.RData")
+```
+
+## Model Performance
+
+```{r}
+#| label: model-performance
+#| echo: false
+
+# Display the performance comparison
+results$performance_comparison
+```
+
+## Team Selection and Prediction
+
+```{r}
+#| label: team-selection
+#| echo: false
+
+inputPanel(
+  selectInput("home_team", "Home Team:", 
+              choices = unique(c(results$historical_data$home_team, results$historical_data$away_team))),
+  selectInput("away_team", "Away Team:", 
+              choices = unique(c(results$historical_data$home_team, results$historical_data$away_team)))
+)
+
+renderPlot({
+  req(input$home_team != input$away_team)
+  
+  new_game <- tibble(
+    home_team = input$home_team,
+    away_team = input$away_team
+  )
+  
+  new_game_predictions <- predict_new_game(new_game, results$individual_models, results$ensemble_model, results$team_performance)
+  
+  plot_model_predictions(new_game_predictions)
+})
+
+renderText({
+  req(input$home_team != input$away_team)
+  
+  new_game <- tibble(
+    home_team = input$home_team,
+    away_team = input$away_team
+  )
+  
+  new_game_predictions <- predict_new_game(new_game, results$individual_models, results$ensemble_model, results$team_performance)
+  
+  paste("Ensemble prediction: ", round(new_game_predictions["Ensemble"] * 100, 2), "% chance of home team win")
+})
+```
+
+## ROC Curve
+
+```{r}
+#| label: roc-curve
+#| echo: false
+
+# Calculate ROC curve for ensemble model
+test_predictions <- predict_individual_models(results$individual_models, results$historical_data)
+ensemble_prediction <- predict(results$ensemble_model, newdata = test_predictions, type = "response")
+roc_obj <- roc(results$historical_data$home_win, ensemble_prediction)
+
+plot(roc_obj, main = "ROC Curve for Ensemble Model")
+text(0.75, 0.25, paste("AUC:", round(auc(roc_obj), 3)), adj = c(0, 1), font = 2)
+```

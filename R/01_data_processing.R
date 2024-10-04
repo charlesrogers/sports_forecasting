@@ -24,7 +24,7 @@ read_historical_data <- function(file_path) {
   team_performance <- data %>%
     bind_rows(
       data %>% select(team = home_team, win = home_win),
-      data %>% select(team = away_team, win = 1 - home_win)
+      data %>% mutate(win = 1 - home_win) %>% select(team = away_team, win)
     ) %>%
     group_by(team) %>%
     summarise(
